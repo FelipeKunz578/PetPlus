@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Painel - PetPlus</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/app.css">
+    <link rel="icon" href="css/icone.png" type="image/png">
+
+</head>
+
+<body class="bg-light">    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-orange" style="background-color:#FF7A59;">
+        <div class="container"><a class="navbar-brand" href="/index.html"><img class="img" src="css/Logo PETPLUS com Pata Estilizada.png" alt=""></a>
+            <div class="navbar-nav"> <a class="nav-link" href="/pets.html">Pets</a> <a class="nav-link"
+                    href="/tutores.html">Tutores</a> <a class="nav-link" href="/servicos.html">Serviços</a> <a
+                    class="nav-link" href="/atendimentos.html">Atendimentos</a> </div>
+                    <div class="sairBotao"><a class="navbar-link" href="/login.html">Sair</a> </div>
+        </div>
+    </nav>
+    <main class="container py-4">
+        <h1 class="mb-4">Painel</h1>
+        <div class="row g-3" id="cards">
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h6 class="card-title">Tutores</h6>
+                        <p class="display-6 mb-0" id="c1">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h6 class="card-title">Pets</h6>
+                        <p class="display-6 mb-0" id="c2">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h6 class="card-title">Serviços</h6>
+                        <p class="display-6 mb-0" id="c3">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h6 class="card-title">Atendimentos</h6>
+                        <p class="display-6 mb-0" id="c4">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-8 col-lg-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h6 class="card-title">Faturamento</h6>
+                        <p class="display-6 mb-0" id="c5">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+      <table class="table table-striped align-middle" id="tblPets">
+        <h1 class="mb-4">Atendimentos em aberto</h1>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Data</th>
+            <th>Pet</th>
+            <th>Serviço</th>
+            <th>Observações</th>
+            <th class="text-end">Ações</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script type="module">
+        import { bootPage, getJSON } from '/js/api.js';
+        await bootPage();
+
+    async function carregarDadosPainel() {
+        try {
+            const [tutores, pets, servicos, atendimentos] = await Promise.all([
+                fetch('/api/tutores/listaTutor').then(r => r.json()),
+                fetch('/api/pets').then(r => r.json()),
+                fetch('/api/servicos/listaServico').then(r => r.json()),
+                fetch('/api/atendimentos/listaAtendimentos').then(r => r.json())
+            ]);
+
+            // Garante que são arrays
+            const tutoresArr = Array.isArray(tutores) ? tutores : tutores?.content || [];
+            const petsArr = Array.isArray(pets) ? pets : pets?.content || [];
+            const servicosArr = Array.isArray(servicos) ? servicos : servicos?.content || [];
+            const atendimentosArr = Array.isArray(atendimentos) ? atendimentos : atendimentos?.content || [];
+
+            // Calcula faturamento somando valores dos serviços dos atendimentos
+            const faturamento = atendimentosArr.reduce((total, atendimento) => {
+                return total + (atendimento.servico?.valor || 0);
+            }, 0);
+
+            document.getElementById('c1').textContent = tutoresArr.length;
+            document.getElementById('c2').textContent = petsArr.length;
+            document.getElementById('c3').textContent = servicosArr.length;
+            document.getElementById('c4').textContent = atendimentosArr.length;
+            document.getElementById('c5').textContent = 'R$ ' + faturamento.toFixed(2).replace('.', ',');
+            
+            console.log('Painel carregado:', { tutores: tutoresArr.length, pets: petsArr.length, servicos: servicosArr.length, atendimentos: atendimentosArr.length, faturamento });
+        } catch (err) {
+            console.error('Erro ao carregar dados do painel:', err);
+            alert('Erro ao carregar dados do painel. Verifique a conexão com o servidor.');
+        }
+    }
+
+    async function carregarAtendimentosAbertos() {
+        try {
+            const res = await fetch("/api/atendimentos/abertos");
+
+            if (!res.ok) {
+                throw new Error("Erro ao buscar atendimentos abertos");
+            }
+
+            const data = await res.json();
+            const lista = Array.isArray(data) ? data : data.content ?? [];
+            const tbody = document.querySelector("#tblPets tbody");
+
+            tbody.innerHTML = lista.map(a => {
+                const data = new Date(a.data).toLocaleString('pt-BR');
+                return `
+                    <tr>
+                        <td>${a.id}</td>
+                        <td>${data}</td>
+                        <td>${a.pet?.nome ?? '-'}</td>
+                        <td>${a.servico?.descricao ?? '-'}</td>
+                        <td>${a.observacoes ?? ''}</td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-outline-success"
+                                onclick="encerrarAtendimento(${a.id})">
+                                Encerrar
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+        } catch (err) {
+            console.error("Erro ao carregar atendimentos abertos:", err);
+            alert("Erro ao carregar atendimentos abertos. Verifique a conexão com o servidor.");
+        }
+    }
+
+    window.encerrarAtendimento = async function(id) {
+        if (!confirm("Encerrar atendimento?")) return;
+
+        try {
+            const res = await fetch(`/api/atendimentos/${id}/fechar`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status: "FECHADO" })
+            });
+
+            if (!res.ok) throw new Error("Erro ao encerrar atendimento");
+
+            carregarAtendimentosAbertos();
+
+        } catch (err) {
+            console.error("Erro ao encerrar atendimento:", err);
+            alert("Erro ao encerrar atendimento. Verifique a conexão com o servidor.");
+        }
+    };
+
+    carregarDadosPainel();
+    carregarAtendimentosAbertos();
+</script>
+</body>
+
+</html>

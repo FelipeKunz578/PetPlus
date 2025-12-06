@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login – PetPlus</title>
+    <link rel="stylesheet" type="text/css" href="css/login.css" />
+    <link rel="icon" href="css/icone.png" type="image/png">
+</head>
+
+<body>
+    <main class="page">
+        <div class="bg-decor"></div>
+
+        <section class="card" aria-labelledby="login-title">
+            <header class="card-header">
+                <!-- imagem ao lado do título fornecida pelo usuário: somente a logo (sem moldura) -->
+                <img id="brand-image" class="logo" alt="Logo PETPLUS com Pata Estilizada" src="css/Logo PETPLUS com Pata Estilizada login.png" onerror="this.style.display='none'"  />
+                <div>
+                    <h1 id="login-title">Seja Bem-vindo</h1>
+                    <p class="subtitle">Faça login na sua conta</p>
+                </div>
+            </header>
+
+            <form class="form" action="#" method="POST" onsubmit="return handleSubmit(event)">
+  <label class="field">
+    <span class="label-text">E-mail</span>
+    <input id="email" name="email" type="email" inputmode="email" required autocomplete="username" />
+  </label>
+
+  <label class="field">
+    <span class="label-text">Senha</span>
+    <div class="password-wrap">
+      <input id="password" name="password" type="password" required autocomplete="current-password" minlength="4" />
+      <button type="button" class="toggle" aria-label="Mostrar senha" onclick="togglePassword()">👁️</button>
+    </div>
+  </label>
+
+  <div class="buttons">
+    <button class="primary" type="submit" name="action" value="login">Entrar</button>
+    <button class="secondary" type="submit" name="action" value="register">Criar Conta</button>
+  </div>
+</form>
+
+<div id="msg"></div>
+
+<script>
+  // alternar visibilidade da senha
+  function togglePassword() {
+    const pw = document.getElementById('password');
+    const btn = document.querySelector('.toggle');
+    if (pw.type === 'password') {
+      pw.type = 'text';
+      btn.setAttribute('aria-label', 'Ocultar senha');
+    } else {
+      pw.type = 'password';
+      btn.setAttribute('aria-label', 'Mostrar senha');
+    }
+  }
+
+  // função principal
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value.trim();
+    const senha = document.getElementById('password').value;
+    const msg = document.getElementById('msg');
+    const action = e.submitter?.value; // pega qual botão foi clicado
+
+    if (!email || !senha) {
+      alert('Preencha e-mail e senha.');
+      return;
+    }
+
+    try {
+      let url = '';
+      let sucessoMsg = '';
+
+      if (action === 'login') {
+        url = '/api/login';
+        sucessoMsg = 'Login realizado com sucesso!';
+      } else if (action === 'register') {
+        url = '/api/atendentes';
+        sucessoMsg = 'Conta criada com sucesso!';
+      } else {
+        throw new Error('Ação desconhecida.');
+      }
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, senha })
+      });
+
+      if (!response.ok) throw new Error('Falha na operação');
+
+      const data = await response.json();
+      console.log('Sucesso:', data);
+
+      msg.className = 'text-success text-center mt-3';
+      msg.textContent = sucessoMsg;
+
+      if (action === 'login') {
+        // redireciona se for login
+        window.location.href = '/index.html';
+      } else {
+        // limpa campos se for cadastro
+        e.target.reset();
+      }
+
+    } catch (err) {
+      console.error(err);
+      msg.className = 'text-danger text-center mt-3';
+      msg.textContent =
+        action === 'login'
+          ? 'Usuário ou senha inválidos.'
+          : 'Erro ao criar conta. Tente novamente.';
+    }
+  }
+</script>
+
+</body>
+
+</html>

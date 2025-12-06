@@ -1,0 +1,160 @@
+/* Estilos uteis para campos de descrição maiores */
+.descricao-large {
+    width: 100%;
+    min-height: 120px;
+    box-sizing: border-box;
+    resize: vertical; /* permite ao usuário ajustar a altura se suportado */
+}
+
+.table-responsive {
+    padding-top: 30px;
+    width: 100%;
+    overflow-x: auto;
+}
+
+/* Remova regras globais para #nome que deformem outros formulários */
+
+/* Navbar base */
+.bg-orange,
+nav.navbar.bg-orange,
+.navbar.bg-orange {
+  /* degrade linear: do coral para um tom mais claro/mais quente */
+  background: linear-gradient(90deg, #FF7A59, #FFB86B) !important;
+}
+
+
+.navbar.bg-orange img {
+  padding-bottom: 0% !important;
+  height: 40px !important;
+  margin-right: 10px !important;
+
+}
+
+/* Links padrão da navbar */
+.navbar.bg-orange .nav-link {
+  color: #eeeeee !important; /* cinza padrão */
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  padding: 6px 20px;
+  border-radius: 6px;
+}
+
+/* Link ativo (página atual) */
+.navbar.bg-orange .nav-link.active,
+.navbar.bg-orange .nav-link.active:focus,
+.navbar.bg-orange .nav-link.active:hover {
+  color: #fff !important; /* texto branco */
+  background-color: #FF7A59 !important; /* laranja mais claro */
+  font-size: 18px;
+  font-weight: 800;
+}
+
+/* Hover dos links */
+.navbar.bg-orange .nav-link:hover {
+  color: #fff !important;
+  background-color: rgb(214, 111, 52) !important;
+  transform: scale(1.05);
+}
+
+/* Botão sair */
+.sairBotao a {
+  background-color: #dc3545;
+  color: white !important;
+  padding: 6px 12px;
+  border-radius: 6px;
+  margin-left: 10px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.sairBotao a:hover {
+  background-color: #bb2d3b !important;
+  transform: scale(1.05);
+}
+
+/* Container da pesquisa */
+.pesquisar {
+  display: flex;
+  gap: 10px; /* espaço entre os elementos */
+  margin-bottom: 20px;
+  padding-top: 20px;
+  padding-bottom: 0px;
+}
+
+/* Barra de pesquisa */
+.pesquisar input[type="search"] {
+  flex: 1; /* ocupa todo espaço restante */
+  padding: 8px 12px;
+  border: 2px solid #FF7A59; /* cor laranja da navbar */
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.pesquisar input[type="search"]:focus {
+  border-color: #FF4500; /* laranja mais forte ao focar */
+}
+
+/* Botões da pesquisa */
+.pesquisar input[type="button"] {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background-color: #FF7A59;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.1s;
+}
+
+.pesquisar input[type="button"]:hover {
+  background-color: #FF4500; /* laranja mais forte ao passar o mouse */
+}
+
+.pesquisar input[type="button"]:active {
+  transform: scale(0.97); /* efeito de clique */
+}
+
+/* Botões Salvar laranja */
+.btn-primary {
+  background-color: #FF7A59;  /* laranja */
+  border-color: #FF7A59;      /* borda combinando */
+  color: white;
+  transition: background-color 0.3s, transform 0.1s;
+}
+
+.btn-primary:hover {
+  background-color: #FF4500; /* laranja mais forte ao passar o mouse */
+}
+
+.btn-primary:active {
+  transform: scale(0.97); /* efeito de clique */
+}
+
+/* Botão Limpar cinza padrão (igual Spring/Bootstrap) */
+#btnLimparPesquisa,
+#btnLimpar {
+    background-color: #6c757d; /* cinza Bootstrap */
+    border-color: #6c757d;
+    color: #fff; /* garante contraste */
+}
+
+/* Efeito hover */
+#btnLimparPesquisa:hover,
+#btnLimpar:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+/* Fotos dos pets na tabela */
+#tblPets img {
+  border-radius: 8px;
+  width: 130px;
+  height: 130px;
+  object-fit: cover; /* crop para manter proporção e preencher */
+}
+
+

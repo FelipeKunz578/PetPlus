@@ -1,0 +1,148 @@
+:root {
+    --bg-1: #0f172a;
+    /* palette updated as requested (assumption: warm, friendly pet brand) */
+    --accent-1: #FF7A59; /* coral */
+    --accent-2: #FFB86B; /* warm yellow */
+    --card-bg: rgba(255,255,255,0.06);
+    --glass: rgba(255,255,255,0.06);
+    --muted: #cbd5e1;
+  }
+
+  *{box-sizing: border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    color: #e6eef8;
+    background: radial-gradient(1200px 600px at 10% 10%, rgba(123,97,255,0.12), transparent),
+                radial-gradient(1000px 500px at 90% 90%, rgba(31,209,249,0.08), transparent),
+                linear-gradient(180deg, var(--bg-1) 0%, #071129 100%);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px;
+  }
+
+  .page{position:relative;width:100%;max-width:980px;z-index:1}
+  /* decor background (user-provided image) - cover entire viewport */
+  .bg-decor{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background-image: url('fundo.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    filter: brightness(.75) saturate(1.05);
+    z-index: 0;
+  }
+  .bg-decor::before{
+    /* dark overlay to keep text readable */
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(7,17,41,0.45), rgba(7,17,41,0.6));
+    pointer-events: none;
+    mix-blend-mode: multiply;
+  }
+
+  .card{
+    position:relative;
+    z-index:1;
+    margin:0 auto;
+    width:100%;
+    max-width:420px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+    border-radius: 25px;
+    padding:28px;
+    box-shadow: 0 10px 30px rgba(2,6,23,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+    backdrop-filter: blur(8px) saturate(120%);
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .card-header{display:flex;gap:14px;align-items:center;margin-bottom:16px}
+  /* apenas a logo (sem moldura) - imagem maior e limpa */
+  .logo{
+    flex:0 0 auto;
+    display:block;
+    width: 150px;
+    object-fit:contain; /* mantém proporção */
+    border-radius: 15px; /* arredondamento sutil solicitado */
+    background: transparent;
+    box-shadow: none;
+    border: none;
+  }
+  .card-header h1{margin:0;font-size:18px;line-height:1.1;color:#fff}
+  .subtitle{margin:0;color:var(--muted);font-size:13px}
+
+  .form{display:flex;flex-direction:column;gap:14px}
+  .field{display:flex;flex-direction:column}
+  .label-text{font-size:13px;color:var(--muted);margin-bottom:8px}
+
+  input[type="email"],input[type="password"],input[type="text"]{
+    width:100%;
+    padding:12px 14px;
+    border-radius: 15px;
+    border:1px solid rgba(255,255,255,0.06);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    color:#eaf6ff;
+    outline:none;
+    transition:box-shadow .16s,transform .12s, border-color .12s;
+  }
+
+  input::placeholder{color:#93a3b8}
+  input:focus{box-shadow:0 6px 18px rgba(30,116,255,0.08);border-color:rgba(123,97,255,0.6);transform:translateY(-1px)}
+
+  .password-wrap{display:flex;align-items:center;gap:8px}
+  .password-wrap .toggle{border:0;background:transparent;color:var(--muted);cursor:pointer;padding:6px;border-radius:8px}
+  .password-wrap .toggle:active{transform:scale(.98)}
+
+  .options{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted)}
+  .remember{display:flex;gap:8px;align-items:center}
+  .remember input{width:16px;height:16px}
+  .forgot{color:var(--muted);text-decoration:none}
+  .forgot:hover{text-decoration:underline}
+
+  .primary{
+    margin-top:4px;
+    width:100%;
+    padding:12px 14px;
+    background: linear-gradient(90deg,var(--accent-1),var(--accent-2));
+    color:#04263b;
+    font-weight:600;
+    border-radius: 15px;
+    border:none;
+    cursor:pointer;
+    box-shadow:0 8px 20px rgba(31,209,249,0.08);
+    transition:transform .12s,box-shadow .12s,opacity .12s
+  }
+  .primary:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(31,209,249,0.12)}
+
+  .secondary{
+    margin-top:4px;
+    width:100%;
+    padding:12px 14px;
+    background: linear-gradient(90deg,var(--accent-1),var(--accent-2));
+    color:#04263b;
+    font-weight:600;
+    border-radius: 15px;
+    border:none;
+    cursor:pointer;
+    box-shadow:0 8px 20px rgba(31,209,249,0.08);
+    transition:transform .12s,box-shadow .12s,opacity .12s
+  }
+  .secondary:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(31,209,249,0.12)}
+  
+  .signup{margin:12px 0 0;color:var(--muted);font-size:13px;text-align:center}
+  .signup a{color:rgba(255,255,255,0.9);text-decoration:none;font-weight:600}
+
+  @media (max-width:480px){
+    .card{padding:18px;border-radius:12px}
+    .card-header h1{font-size:16px}
+    /* reduzir logo em mobile (ainda maior que antes) */
+    .logo{width:72px;height:72px;border-radius:8px}
+  }
+
+  input:focus-visible, .toggle:focus-visible, .primary:focus-visible{box-shadow:0 0 0 4px rgba(123,97,255,0.12)}

@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="utf-8">
+  <title>Atendimentos – PetPlus</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="icon" href="css/icone.png" type="image/png">
+</head>
+
+<body class="bg-light">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-orange" style="background-color:#FF7A59;">
+    <div class="container">
+      <a class="navbar-brand" href="/index.html"><img class="img" src="css/Logo PETPLUS com Pata Estilizada.png"
+          alt=""></a>
+      <div class="navbar-nav">
+        <a class="nav-link" href="/pets.html">Pets</a>
+        <a class="nav-link" href="/tutores.html">Tutores</a>
+        <a class="nav-link" href="/servicos.html">Serviços</a>
+        <a class="nav-link active" href="/atendimentos.html">Atendimentos</a>
+      </div>
+      <div class="sairBotao">
+        <a class="navbar-link" href="/login.html">Sair</a>
+      </div>
+    </div>
+  </nav>
+
+
+  <main class="container py-4">
+    <h1 class="h3 mb-3">Gerenciar Atendimentos</h1>
+
+    <form id="atendimentoForm" class="row g-3 mb-4"> <input type="hidden" id="atendimentoId">
+      <div class="col-md-4"> <label class="form-label">Data e hora*</label>
+        <input id="dataHora" type="datetime-local" class="form-control" required>
+      </div>
+      <div class="col-md-4"> <label class="form-label">Pet*</label> <select id="petId" class="form-select"
+          required></select> </div>
+      <div class="col-md-4"> <label class="form-label">Serviço*</label> <select id="servicoId" class="form-select"
+          required></select> </div>
+      <div class="col-12"> <label class="form-label">Observações</label> <textarea id="observacoes" class="form-control"
+          rows="2"></textarea> </div>
+      <div class="col-12"> <button class="btn btn-primary" type="submit">Salvar</button> <button
+          class="btn btn-secondary" type="button" id="btnLimpar">Limpar</button> </div>
+    </form>
+
+    <div class="table-responsive">
+      <table class="table table-striped align-middle" id="tblAtendimentos">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Data</th>
+            <th>Pet</th>
+            <th>Serviço</th>
+            <th>Observações</th>
+            <th>Status</th>
+            <th class="text-end">Ações</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script>
+    (async () => {
+      const els = {
+        form: document.getElementById('atendimentoForm'),
+        id: document.getElementById('atendimentoId'),
+        dataHora: document.getElementById('dataHora'),
+        petId: document.getElementById('petId'),
+        servicoId: document.getElementById('servicoId'),
+        observacoes: document.getElementById('observacoes'),
+        tblBody: document.querySelector('#tblAtendimentos tbody'),
+        btnLimpar: document.getElementById('btnLimpar')
+      };
+
+      // Monta linha da tabela
+      function toRow(a) {
+        const d = new Date(a.data);
+        const dataStr = d.toLocaleString();
+        const petNome = a.pet?.nome ?? '-';
+        const servNome = a.servico?.descricao ?? a.servico?.nome ?? '-';
+        return `
+      <tr>
+        <td>${a.id}</td>
+        <td>${dataStr}</td>
+        <td>${petNome}</td>
+        <td>${servNome}</td>
+        <td>${a.observacoes ?? ''}</td>
+        <td>
+            <span class="badge ${a.status === 'FECHADO' ? 'text-bg-danger' : 'text-bg-success'}">
+             ${a.status ?? 'ABERTO'}
+            </span>
+        </td>
+        <td class="text-end">
+          <button class="btn btn-sm btn-outline-primary" data-act="edit" data-id="${a.id}">Editar</button>
+          <button class="btn btn-sm btn-outline-danger" data-act="del" data-id="${a.id}">Excluir</button>
+           <button class="btn btn-sm ${a.status === 'FECHADO' ? 'btn-danger' : 'btn-outline-success'}"
+          data-act="close" data-id="${a.id}"
+          ${a.status === 'FECHADO' ? 'disabled' : ''}>
+      ${a.status === 'FECHADO' ? 'Fechado' : 'Encerrar'}
+  </button>
+</td>
+      </tr>`;
+      }
+      
+
+      function limpar() {
+        els.id.value = '';
+        els.form.reset();
+      }
+
+      async function carregarPets() {
+        try {
+          const res = await fetch('/api/pets');
+          if (!res.ok) throw new Error('Erro ao carregar pets');
+          const data = await res.json();
+          const list = Array.isArray(data) ? data : data.content ?? [];
+          els.petId.innerHTML = list.map(p => `<option value="${p.id}">${p.nome} — ${p.especie}</option>`).join('');
+        } catch (err) {
+          console.error('Erro ao carregar pets:', err);
+        }
+      }
+
+      async function carregarServicos() {
+        try {
+          const res = await fetch('/api/servicos/listaServico');
+          if (!res.ok) throw new Error('Erro ao carregar serviços');
+          const lista = await res.json();
+          els.servicoId.innerHTML = lista.map(s => `<option value="${s.id}">${s.descricao ?? s.nome} — ${s.valor ?? ''}</option>`).join('');
+        } catch (err) {
+          console.error('Erro ao carregar serviços:', err);
+        }
+      }
+
+
+      async function carregarAtendimentos() {
+        try {
+          const res = await fetch('/api/atendimentos/listaAtendimentos');
+          if (!res.ok) throw new Error('Erro ao carregar atendimentos');
+          const list = await res.json();
+          els.tblBody.innerHTML = list.map(toRow).join('');
+        } catch (err) {
+          console.error('Erro ao carregar atendimentos:', err);
+        }
+      }
+
+
+      async function saveAtendimento(payload) {
+        const method = payload.id ? 'PUT' : 'POST';
+        const url = payload.id ? `/api/atendimentos/${payload.id}` : '/api/atendimentos';
+        const res = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error('Erro na requisição');
+        return res.json();
+      }
+
+      els.form.addEventListener('submit', async e => {
+        e.preventDefault();
+        try {
+          const dt = els.dataHora.value;
+          const payload = {
+            id: els.id.value ? Number(els.id.value) : undefined,
+            data: dt ? new Date(dt).toISOString() : null,
+            pet: { id: Number(els.petId.value) },
+            servico: { id: Number(els.servicoId.value) },
+            observacoes: els.observacoes.value.trim() || null
+          };
+          await saveAtendimento(payload);
+          await carregarAtendimentos();
+          limpar();
+          alert('Registro salvo com sucesso!');
+        } catch (err) {
+          alert('Erro ao salvar: ' + (err.message || 'verifique os dados'));
+        }
+      });
+
+      els.btnLimpar.addEventListener('click', limpar);
+
+      els.tblBody.addEventListener('click', async e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    const id = Number(btn.dataset.id);
+
+    if (btn.dataset.act === 'edit') {
+        try {
+            const res = await fetch(`/api/atendimentos/${id}`);
+            if (!res.ok) throw new Error('Erro ao buscar atendimento');
+            const a = await res.json();
+            els.id.value = a.id;
+            if (a.data) {
+                const d = new Date(a.data);
+                const pad = n => String(n).padStart(2, '0');
+                els.dataHora.value = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+            } else els.dataHora.value = '';
+            els.petId.value = a.pet?.id ?? '';
+            els.servicoId.value = a.servico?.id ?? '';
+            els.observacoes.value = a.observacoes ?? '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } catch (err) {
+            alert('Erro ao carregar registro: ' + (err.message || ''));
+        }
+
+    } else if (btn.dataset.act === 'del') {
+        if (!confirm('Confirma exclusão?')) return;
+        try {
+            const res = await fetch(`/api/atendimentos/${id}`, { method: 'DELETE' });
+            if (!res.ok) throw new Error('Erro ao excluir');
+            await carregarAtendimentos();
+        } catch (err) {
+            alert('Erro ao excluir: ' + (err.message || ''));
+        }
+
+    } else if (btn.dataset.act === 'close') {
+        try {
+            // Atualiza status para FECHADO
+            const res = await fetch(`/api/atendimentos/${id}/fechar`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'FECHADO' })
+            });
+
+            if (!res.ok) throw new Error('Erro ao encerrar atendimento');
+
+            await carregarAtendimentos();
+        } catch (err) {
+            alert('Erro ao encerrar: ' + (err.message || ''));
+        }
+    }
+});
+
+
+      await carregarPets();
+      await carregarServicos();
+      await carregarAtendimentos();
+    })();
+  </script>
+
+
+</body>
+
+</html>
