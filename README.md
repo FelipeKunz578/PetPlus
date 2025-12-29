@@ -1,12 +1,10 @@
-# 🐾 PetPlus — Sistema de Gestão para Petshops
+# PetPlus — Sistema de Gestão para Petshops
 
 O **PetPlus** é um sistema de gestão desenvolvido para petshops, permitindo o controle de clientes, pets, serviços, atendimentos e funcionários de forma simples e eficiente.
 
 Este projeto foi criado com **Spring Boot** e **PostgreSQL**, utilizando boas práticas de arquitetura e organização de código.
 
----
-
-## 🚀 Funcionalidades
+# Funcionalidades
 
 - Cadastro de clientes  
 - Cadastro de pets  
@@ -15,9 +13,7 @@ Este projeto foi criado com **Spring Boot** e **PostgreSQL**, utilizando boas pr
 - Consulta e edição de dados  
 - Integração com banco PostgreSQL  
 
----
-
-## 🛠️ Tecnologias Utilizadas
+# Tecnologias Utilizadas
 
 - **Java 17+**
 - **Spring Boot** (Web, JPA, Validation)
@@ -25,13 +21,3 @@ Este projeto foi criado com **Spring Boot** e **PostgreSQL**, utilizando boas pr
 - **Hibernate**
 - **Maven**
 - (Opcional) **SpringDoc/OpenAPI** para documentação da API
-
----
-
-## 📦 Como rodar o projeto
-
-### 1. Clone o repositório
-
-```bash
-git clone https://github.com/FelipeKunz578/PetPlus.git
-cd PetPlus
