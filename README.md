@@ -20,4 +20,3 @@ Este projeto foi criado com **Spring Boot** e **PostgreSQL**, utilizando boas pr
 - **PostgreSQL**
 - **Hibernate**
 - **Maven**
-- (Opcional) **SpringDoc/OpenAPI** para documentação da API
