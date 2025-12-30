@@ -18,5 +18,4 @@ Este projeto foi criado com **Spring Boot** e **PostgreSQL**, utilizando boas pr
 - **Java 17+**
 - **Spring Boot** (Web, JPA, Validation)
 - **PostgreSQL**
-- **Hibernate**
 - **Maven**
